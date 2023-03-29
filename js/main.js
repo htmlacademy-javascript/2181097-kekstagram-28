@@ -1,3 +1,2 @@
-
-import {generatedContent} from './data.js';
-generatedContent();
+import {renderThumbnails} from './thumbnails.js';
+renderThumbnails();

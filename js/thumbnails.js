@@ -10,3 +10,21 @@
 // Отрисуйте сгенерированные DOM-элементы в блок .pictures. Для вставки элементов используйте DocumentFragment.
 
 // Подключите модуль в проект.
+import {generatedContent} from './data.js';
+generatedContent();
+const thumbnailTemplate = document.querySelector('#picture').content.querySelector('.picture');
+const container = document.querySelector('.pictures');
+
+const createThumbnail = ({comment, description, likes, url}) => {
+  const thumbnail = thumbnailTemplate.cloneNode(true);
+  const picture = thumbnail.querySelector('.picture__img');
+  picture.src = url;
+  picture.alt = description;
+  thumbnail.querySelector('.picture__comments').textContent = comment.length;
+  thumbnail.querySelector('.picture__likes').textContent = likes;
+  return thumbnail;
+};
+const renderThumbnails = () => {
+  generatedContent().forEach((picture) => container.append(createThumbnail(picture)));
+};
+export {renderThumbnails};
