@@ -1,3 +1,4 @@
+import {getRandomInteger, getRandomArrayElement} from './utils.js';
 const IDS_COUNT = 25;
 const AVATARS_COUNT= 6;
 const LIKES_MIN = 15;
@@ -56,4 +57,4 @@ const createItem = (index) => ({
 });
 const generatedContent = () => Array.from({length: IDS_COUNT}, (_, index) => createItem(index));
 
-export generatedContent;
+export {generatedContent};
