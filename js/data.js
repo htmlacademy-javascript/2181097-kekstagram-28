@@ -1,6 +1,6 @@
 import {getRandomInteger, getRandomArrayElement} from './utils.js';
 const IDS_COUNT = 25;
-const AVATARS_COUNT= 6;
+const AVATARS_COUNT = 6;
 const LIKES_MIN = 15;
 const LIKES_MAX = 200;
 const COMMENTS_COUNT = 20;
@@ -53,7 +53,7 @@ const createItem = (index) => ({
   url: `photos/${index + 1}.jpg`,
   description: getRandomArrayElement(DESCRIPTIONS),
   likes: getRandomInteger(LIKES_MIN, LIKES_MAX),
-  comment: Array.from({ length: getRandomInteger(0, COMMENTS_COUNT) }, (_,index) => createComment(index)),
+  comment: Array.from({ length: getRandomInteger(0, COMMENTS_COUNT) }, (_,commentIndex) => createComment(commentIndex)),
 });
 const generatedContent = () => Array.from({length: IDS_COUNT}, (_, index) => createItem(index));
 
