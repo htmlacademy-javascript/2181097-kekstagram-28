@@ -23,4 +23,3 @@ const renderThumbnails = () => {
   });
 };
 export {renderThumbnails};
-
