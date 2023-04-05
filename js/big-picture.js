@@ -28,3 +28,4 @@ function onDocumentKeyDown (evt) {
 }
 closeButton.addEventListener('click', closeBigPicture);
 export {showBigPicture};
+
