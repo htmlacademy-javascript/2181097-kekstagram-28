@@ -58,3 +58,4 @@ const createItem = (index) => ({
 const generatedContent = () => Array.from({length: IDS_COUNT}, (_, index) => createItem(index));
 
 export {generatedContent};
+export {createComment};
