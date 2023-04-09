@@ -18,6 +18,9 @@ const renderThumbnails = () => {
   content.forEach((picture) => container.append(createThumbnail(picture)));
   container.addEventListener('click', (evt) => {
     const thumbnailId = evt.target.dataset.thumbnailId;
+    if (!thumbnailId) {
+      return;
+    }
     const dataId = content.find(({id}) => +thumbnailId === id);
     showBigPicture(dataId);
   });

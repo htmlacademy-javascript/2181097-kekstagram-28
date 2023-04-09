@@ -1,93 +1,279 @@
-// Затем проверьте, правильные ли типы стоят у нужных полей, если нет — проставьте правильные.
+const pictureLoader = document.querySelector('#upload-file');
+const closeLoader = document.querySelector('#upload-cancel');
+const showLoader = document.querySelector('.img-upload__overlay');
+const scaleSmaller = document.querySelector('.scale__control--smaller');
+const scaleBigger = document.querySelector('.scale__control--bigger');
+const scaleDefinition = document.querySelector('.scale__control--value');
+const scaleStep = 25;
+const minScale = 25;
+const maxScale = 100;
+const scaleDefault = 100;
+const photoPreview = document.querySelector('.img-upload__preview img');
+// изменение значения на шкале визуально
+const scaleIconChange = (value) => {
+  photoPreview.style.transform = `scale(${value / 100})`;
+  scaleDefinition.value = `${value}%`;
+};
+// открытие модалки
+const loaderModal = () => {
+  showLoader.classList.remove('hidden');
+  document.body.classList.add('modal-open');
+  scaleIconChange(scaleDefault);
+};
+// обработка открытия окна загрузки
+pictureLoader.addEventListener('change', loaderModal);
+// обработка нажатия -
+scaleSmaller.addEventListener('click', scaleSmaller);
+// обработка нажатия +
+scaleBigger.addEventListener('click', scaleBigger);
+// обработка кнопки -
+const onSmallerClick = () => {
+  const currentValue = parseInt(scaleDefinition.value, 10);
+  let newValue = currentValue - scaleStep;
+  if (newValue < minScale) {
+    newValue = minScale;
+  }
+  scaleIconChange(newValue);
+};
+// обработка кнопки +
+const onBiggerClick = () => {
+  const currentValue = parseInt(scaleDefinition.value, 10);
+  let newValue = currentValue + scaleStep;
+  if (newValue > maxScale) {
+    newValue = maxScale;
+  }
+  scaleIconChange(newValue);
+};
+scaleSmaller.addEventListener('click', onSmallerClick);
+scaleBigger.addEventListener('click', onBiggerClick);
+// закрытие окна загрузки
+// закрытие по кнопке
+const closerModal = () => {
+  showLoader.classList.add('hidden');
+  document.body.classList.remove('modal-open');
+  // закрытие по клавише
+  document.removeEventListener ('keydown', onDocumentKeyDown);
+  function onDocumentKeyDown (evt) {
+    if (evt.key === 'Escape') {
+      closeOnEscape();
+    }
+  }
+};
 
-// 1.1. Загрузка нового изображения:
-// Напишите код и добавьте необходимые обработчики для реализации этого пункта техзадания. В работе вы можете опираться на код показа окна с полноразмерной
-//  фотографией(ЧТО ИМЕЕТСЯ ВВИДУ ОПИРАТЬСЯ???),
+closeLoader.addEventListener('click', closerModal);
 
-// по клику на иконку c id #upload-file
-// вызов метода input или change У ОБРАБОТЧИКА СОБЫТИЙ????
-// После выбора изображения (изменения значения поля #upload-file),???????????
-// показывается форма редактирования изображения. У элемента .img-upload__overlay удаляется класс hidden, а body задаётся класс modal-open.
 
-// После выбора изображения пользователем с помощью стандартного контрола загрузки файла #upload-file,
-//  нужно подставить его в форму редактирования вместо тестового изображения.?????
+const EFFECTS = [
+  {
+    name: 'none',
+    style: 'none',
+    min: 0,
+    max: 100,
+    step: 1,
+    unit: '',
+  },
+  {
+    name: 'chrome',
+    style: 'grayscale',
+    min: 0,
+    max: 1,
+    step: 0.1,
+    unit: '',
+  },
+  {
+    name: 'sepia',
+    style: 'sepia',
+    min: 0,
+    max: 1,
+    step: 0.1,
+    unit: '',
+  },
+  {
+    name: 'marvin',
+    style: 'invert',
+    min: 0,
+    max: 100,
+    step: 1,
+    unit: '',
+  },
+  {
+    name: 'phobos',
+    style: 'blur',
+    min: 0,
+    max: 3,
+    step: 0.1,
+    unit: '',
+  },
 
-// ИЗМЕНЕНИЕ МАСШТАБА ИЗОБРАЖЕНИЯ
-// обрабочтики событий на элементы с классами scale__control--smaller и scale__control--bigger
-// При нажатии на кнопки .scale__control--smaller и .scale__control--bigger должно изменяться значение поля .scale__control--value;
-// Значение должно изменяться с шагом в 25. Например, если значение поля установлено в 50%, после нажатия на «+», значение должно стать равным 75%.
-//  Максимальное значение — 100%, минимальное — 25%. Значение по умолчанию — 100%;
-// При изменении значения поля .scale__control--value изображению внутри .img-upload__preview должен добавляться соответствующий стиль CSS,
-//  который с помощью трансформации scale задаёт масштаб. Например, если в поле стоит значение 75%, то в стиле изображения должно быть написано transform: scale(0.75).
+  {
+    name: 'heat',
+    style: 'brightness',
+    min: 1,
+    max: 3,
+    step: 0.1,
+    unit: '',
+  },
+];
 
-//НАЛОЖЕНИЕ ЭФФЕКТА
-// В этом задании мы продолжим реализацию сценария загрузки изображения и его редактирования на примере заглушки.
+const sliderDefaultValue = 100;
+const sliderToggle = document.querySelector('.effect-level__value');
+const effectsList = document.querySelector('.effects__list');
+const slider = document.querySelector('.effect-level__slider');
 
-// Напишите код, который позволит пользователю редактировать масштаб изображения.(ПОДКЛЮЧИТЬ СЛАЙДЕР???) Кроме визуального применения эффекта необходимо записывать значение
-// в поле формы с масштабом, доступное только для чтения(?????), для дальнейшей отправки на сервер.(ЗАПИСЬ В МАССИВ???)
-// С помощью библиотеки noUiSlider (/vendor/nouislider) реализуйте применение эффекта для изображения.
-// Кроме визуального применения эффекта необходимо записывать значение в скрытое поле для дальнейшей отправки на сервер.(?????)
+const DEFAUL_EFFECT = EFFECTS[0];
+let chosenEffect = DEFAUL_EFFECT;
+const isDefault = () => chosenEffect === DEFAUL_EFFECT;
+const hideSlider = () => {
+  slider.classList.add('hidden');
+};
+const showSlider = () => {
+  slider.classList.remove('hidden');
+};
 
-// Обратите внимание, что при переключении фильтра, уровень эффекта должен сразу сбрасываться до начального состояния,
-//  т. е. логика по определению уровня насыщенности должна срабатывать не только при «перемещении» слайдера,
-// но и при переключении фильтров.
-// применение одного из заранее заготовленных эффектов(КАК ДОЛЖНА ВЫГЛЯДЕТЬ ЛОГИКА И ИНСТРУМЕНТЫ ЕЕ РЕАЛИЗАЦИИ)
-// выбор глубины эффекта с помощью ползунка (СЛАЙДЕР????)
-// добавление текстового комментария (ЛОГИКА И ИСТРУМЕНТЫ, КАКОЙ КОММЕНТАРИЙ ИМЕЕТСЯ ВВИДУ???)
-// По умолчанию должен быть выбран эффект «Оригинал».(????????)
-// На изображение может накладываться только один эффект.(????????)
-// При смене эффекта, выбором одного из значений среди радиокнопок .effects__radio,
-// добавить картинке внутри .img-upload__preview CSS-класс, соответствующий эффекту.(КЛАССЛИСТ??????)
-//  Например, если выбран эффект .effect-chrome, изображению нужно добавить класс effects__preview--chrome.(ШАБЛОНЫ?????)
-// Интенсивность эффекта регулируется перемещением ползунка в слайдере.
-// Слайдер реализуется сторонней библиотекой для реализации слайдеров noUiSlider.
-// Уровень эффекта записывается в поле .effect-level__value. При изменении уровня интенсивности эффекта (предоставляется API слайдера),(????)
-// CSS-стили картинки внутри .img-upload__preview обновляются следующим образом:(КАК ЭТО СВЯЗАТЬ????)
-// Для эффекта «Хром» — filter: grayscale(0..1) с шагом 0.1;
-// Для эффекта «Сепия» — filter: sepia(0..1) с шагом 0.1;
-// Для эффекта «Марвин» — filter: invert(0..100%) с шагом 1%;
-// Для эффекта «Фобос» — filter: blur(0..3px) с шагом 0.1px;
-// Для эффекта «Зной» — filter: brightness(1..3) с шагом 0.1;
-// Для эффекта «Оригинал» CSS-стили filter удаляются.(РЕАЛИЗАЦИЯ????)
-// При выборе эффекта «Оригинал» слайдер и его контейнер (элемент .img-upload__effect-level) скрываются.(КЛАССЛИСТ???)
-// При переключении эффектов, уровень насыщенности сбрасывается до начального значения (100%): слайдер,
-// CSS-стиль изображения и значение поля должны обновляться.(РЕАЛИЗАЦИЯ????)
-// ЗАКРЫТИЕ ФОРМЫ РЕДАКТИРОВАНИЯ ИЗОБРАЖЕНИЯ производится либо нажатием на кнопку #upload-cancel, либо нажатием клавиши Esc.(ОБРАБОТЧИКИ СОБЫТИЙ НА КНОПКУ???)
-// ,(ОБРАБОТЧИК СОБЫТИЙ НА ESC???)
-//  Элементу .img-upload__overlay возвращается класс hidden. У элемента body удаляется класс modal-open.(КЛАССЛИСТЫ????)
-// Обратите внимание, что при закрытии формы дополнительно необходимо сбрасывать значение поля выбора файла #upload-file. (РЕАЛИЗАЦИЯ????)
-// В принципе, всё будет работать,если при повторной попытке загрузить в поле другую фотографию.
-// Но! Событие change не сработает, если пользователь попробует загрузить ту же фотографию,
-// а значит окно с формой не отобразится, что будет нарушением техзадания. Значение других полей формы также нужно сбрасывать.(И ЧТО С ЭТИМ СДЕЛАТЬ????)
-// Напишите код для валидации формы добавления изображения, используя библиотеку Pristine (/vendor/pristine). Список полей для валидации:
+const updateSlider = () => {
+  slider.noUiSlider.updateOptions({
+    range: {
+      min: chosenEffect.min,
+      max: chosenEffect.max,
+    },
+    step: chosenEffect.step,
+    start: chosenEffect.max,
+    connect: 'lower',
+  });
+  if (isDefault()) {
+    hideSlider();
+  } else {
+    showSlider();
+  }
+};
 
-// ДОБАВЛЕНИЕ ХЭШТЭГОВ
-// НАПИСАТЬ РЕГУЛЯРНОЕ ВЫРАЖЕНИЕ ВАЛИДИРУЮЩЕЕ ИНПУТ ДЛЯ ХЭШТЭГОВ
-// хэш-тег начинается с символа # (решётка);
-// строка после решётки должна состоять из букв и чисел и не может содержать пробелы, спецсимволы (#, @, $ и т. п.), символы пунктуации
-// (тире, дефис, запятая и т. п.), эмодзи и т. д.;
-// хеш-тег не может состоять только из одной решётки;
-// максимальная длина одного хэш-тега 20 символов, включая решётку;(МАКСЛЕС ИЛИ ПРИСТИН????)
-// хэш-теги нечувствительны к регистру: #ХэшТег и #хэштег считаются одним и тем же тегом;(LOWERcASE????)
-// хэш-теги разделяются пробелами;(????????)
-// один и тот же хэш-тег не может быть использован дважды;(ПРОВЕРКА МАССИВА НА СОДЕРЖИМОЕ???)
-// Для валидации хэш-тегов вам придётся вспомнить, как работать с массивами. Набор хэш-тегов можно превратить в массив, воспользовавшись методом .split().
-//  Он разбивает строки на массивы. После этого, вы можете написать цикл, который будет ходить по полученному массиву и проверять каждый из хэш-тегов на
-//  предмет соответствия ограничениям.
-// Если хотя бы один из тегов не проходит нужных проверок, показывать сообщение об ошибке.(IF????)
-// нельзя указать больше пяти хэш-тегов;(МАКСЛЕНС В РАЗМЕТКЕ ИЛИ ВАЛИДАЦИЯ В ПРИСТИН?????)
-// хэш-теги необязательны;;(ПРОСТО ОТСУТСТВУЕТ АТРИБУТ REQUIRED????)
-// если фокус находится в поле ввода хэш-тега, нажатие на Esc не должно приводить к закрытию формы редактирования изображения.(ОТМЕНА СЦЕНАРИЯ БРАУЗЕРА????)
+const changeEffect = (evt) => {
+  if (!evt.target.classList.contains('effects__radio')) {
+    return;
+  };
+  const currentEffect = evt.target.value;
+  chosenEffect = EFFECTS.find((effect) => effect.name === currentEffect);
+  photoPreview.className = `effects__preview--${chosenEffect.name}`;
+  sliderToggle.value = sliderDefaultValue;
+  updateSlider();
+  if (currentEffect === 'marvin') {
+    photoPreview.style.filter = 'invert(100%)';
+    sliderToggle.value = `${sliderDefaultValue}%`;
+  }
+  if (currentEffect === 'chrome') {
+    photoPreview.style.filter = 'grayscale(1)';
+    sliderToggle.value = `${sliderDefaultValue / 100}`;
+  }
+  if (currentEffect === 'sepia') {
+    photoPreview.style.filter = 'sepia(1)';
+    sliderToggle.value = `${sliderDefaultValue / 100}%`;
+  }
+  if (currentEffect === 'phobos') {
+    photoPreview.style.filter = 'blur(3px)';
+    sliderToggle.value = `${sliderDefaultValue / 100 * 3}px`;
+  }
+  if (currentEffect === 'heat') {
+    photoPreview.style.filter = 'brightness(3)';
+    sliderToggle.value = `${sliderDefaultValue / 100 * 3}`;
+  }
+  if (currentEffect === 'none') {
+    photoPreview.style.filter = '';
+    sliderToggle.value = '';
+  }
+};
+
+effectsList.addEventListener('change', changeEffect);
+
+noUiSlider.create(slider, {
+  range: {
+    'min': EFFECTS[0].min,
+    'max': EFFECTS[0].max,
+  },
+  step: EFFECTS[0].step,
+  start: EFFECTS[0].max,
+  connect: 'lower',
+});
+
+
+
+
+
+
+// const VALID_SYMBOLS = /^[a-zа-яё0-9]{1,19}$/i;
+// const MAX_HASHTAG_COUNT = 5;
+// const TAG_ERROR_TEXT = 'Неправильно заполнены хэштеги';
+// const form = document.querySelector('.img-uplosd__form');
+// const hashtagField = document.querySelector('.text__hashtags');
+// const commentField = document.querySelector('.text__description');
+// // подключает Пристин
+// const pristine = new Pristine(form, {
+//   classTo: 'img-upload__field-wrapper',
+//   errorTextParent: 'img-upload__field-wrapper',
+//   errorTextClass: 'img-upload__field-wrapper__error',
+// });
+// // проверяет хэштэги на уникальность
+// // разобрать механику
+// const uniqueTags = (tags) => {
+//   const lowerCaseTags = tags.map((tag) => tag.toLowerCase());
+//   // разобрать сет
+//   return lowerCaseTags.length === new Set(lowerCaseTags).size;
+// };
+// const isValidTag = (tag) => VALID_SYMBOLS.test(tag);
+// const validateTags = (value) => {
+//   const tags = value
+//   .trin(),
+//   .split(' '),
+//  // разобрать
+//   .filter((tag) => tag.trin().length);
+//   return validateTags && uniqueTags && tags.every(isValidTag);
+// };
+//  // разобрать
+//  pristine.addValidator(
+//   hashtagField,
+//   validateTags,
+//   TAG_ERROR_TEXT
+//  );
+//  const onFormSubmit = (evt) => {
+//   evt.preventDefault();
+//   const isValid = pristine.validate();
+// // дописать функции в проверку
+//   if (isValid) {
+//     blockSubmitButton();
+//     await CSSLayerBlockRule(new FormData(form));
+//     unblockSubmitButton();
+//   }
+//  };
+// const isTextFieldFocused = () => {
+//   document.activeElement === hashtagField ||
+//   document.activeElement === commentField;
+// };
+// const onDocumentKeyDown(evt) {
+//   if (evt.key === 'Escape') && !isTextFieldFocused() {
+//     evt.preventDefault();
+//     closerModal();
+//   }
+// };
+// // отменяет обработчик Escape при фокусе
+// // разобрать
+// commentField.addEventListener('keydown', (evt) => {
+//   if (evt.key === 'Escape') {
+//     evt.stopPropagation();
+//   }
+// });
+// // контейнерп для вывода хэштэгов .social__caption
+
+
+// Если хотя бы один из тегов не проходит нужных проверок, показывать сообщение об ошибке.(строка через 3 значения с испольтзованием &&
+// нельзя указать больше пяти хэш-тегов;(ВАЛИДАЦИЯ В ПРИСТИН?????)проверить длину массива до 5 длина setа
+// если фокус находится в поле ввода хэш-тега, нажатие на Esc не должно приводить к закрытию формы редактирования изображения
+// (снимать листенер с кнопки esc при фокусе на инпуте и добавлять при блюре) через состояния актив на элементе)
 // Как отменить обработчик Esc при фокусе?
 // Задача не имеет одного верного решения, однако намекнём на самый простой — использовать stopPropagation для события нажатия клавиш в поле при фокусе.
 
 //КОММЕНТАРИЙ
-
-// комментарий не обязателен;(ПРОСТО ОТСУТСТВУЕТ АТРИБУТ REQUIRED????)
-// длина комментария не может составлять больше 140 символов;(МАКСЛЕНС В РАЗМЕТКЕ ИЛИ НАСТРОЙКИ ПРИСТИН)
-// если фокус находится в поле ввода комментария, нажатие на Esc не должно приводить к закрытию формы редактирования изображения.(ОТМЕНА СЦЕНАРИЯ БРАУЗЕРА????)
 // Как отменить обработчик Esc при фокусе?
-// Задача не имеет одного верного решения, однако намекнём на самый простой — использовать stopPropagation для события нажатия клавиш в поле при фокусе.(IF????)
+// Задача не имеет одного верного решения, однако намекнём на самый простой — использовать stopPropagation для события нажатия клавиш в поле при фокусе.
+// (тоже через чочтояние акитив на элементе
 // Реализуйте логику проверки так, чтобы, как минимум, она срабатывала при попытке отправить форму и не давала этого сделать,
 // если форма заполнена не по правилам.(ПРИСТИН?????)
 //  При желании, реализуйте проверки сразу при вводе значения в поле.(ШТОАА?)
