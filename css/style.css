@@ -206,7 +206,7 @@ main {
 }
 
 .picture__info {
-  display: none;
+  /* display: none; */
 
   margin: 0;
   padding: 15px;
@@ -238,6 +238,10 @@ main {
   font-weight: 400;
   color: #ffffff;
 }
+
+.picture__likes {
+  display: none;
+};
 
 .picture__comments {
   margin-right: 10px;

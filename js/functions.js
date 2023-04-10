@@ -49,3 +49,4 @@ const myPadStart = (string, maxLenght, pad) => {
 };
 
 myPadStart();
+
