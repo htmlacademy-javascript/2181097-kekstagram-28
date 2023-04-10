@@ -80,18 +80,18 @@ const EFFECTS = [
 const DEFAULT_EFFECT = EFFECTS[0];
 let chosenEffect = DEFAULT_EFFECT;
 
-// изменение значения на шкале визуально
+
 const scaleIconChange = (value) => {
   photoPreview.style.transform = `scale(${value / 100})`;
   scaleDefinition.value = `${value}%`;
 };
-// открытие модалки
+
 const loaderModal = () => {
   showLoader.classList.remove('hidden');
   document.body.classList.add('modal-open');
   scaleIconChange(scaleDefault);
 };
-// обработка открытия окна загрузки
+
 pictureLoader.addEventListener('change', loaderModal);
 const onSmallerClick = () => {
   const currentValue = parseInt(scaleDefinition.value, 10);
@@ -101,7 +101,7 @@ const onSmallerClick = () => {
   }
   scaleIconChange(newValue);
 };
-// обработка кнопки +
+
 const onBiggerClick = () => {
   const currentValue = parseInt(scaleDefinition.value, 10);
   let newValue = currentValue + scaleStep;
@@ -110,14 +110,13 @@ const onBiggerClick = () => {
   }
   scaleIconChange(newValue);
 };
+
 scaleSmaller.addEventListener('click', onSmallerClick);
 scaleBigger.addEventListener('click', onBiggerClick);
-// закрытие окна загрузки
-// закрытие по кнопке
+
 const closerModal = () => {
   showLoader.classList.add('hidden');
   document.body.classList.remove('modal-open');
-  // закрытие по клавише
   document.removeEventListener ('keydown', onDocumentKeyDown);
   function onDocumentKeyDown (evt) {
     if (evt.key === 'Escape') {

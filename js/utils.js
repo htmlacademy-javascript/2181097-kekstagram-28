@@ -10,7 +10,7 @@ const getRandomArrayElement = (elements) =>
 const isEscapeKey = (evt) => evt.key === 'Escape';
 export {getRandomInteger,getRandomArrayElement, isEscapeKey};
 
-// удалить функции для отрисовки моков
+
 // const ALERT_SHOW_TIME = 500;
 
 // const showAllert = (message) => {

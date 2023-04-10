@@ -15,6 +15,7 @@ const showBigPicture = ({url, description, likes, comments}) => {
   document.addEventListener('keydown', onDocumentKeyDown);
   renderComments(comments);
 };
+
 const closeButton = document.querySelector('.big-picture__cancel');
 function closeBigPicture () {
   bigPicture.classList.add('hidden');
