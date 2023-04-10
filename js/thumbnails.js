@@ -1,6 +1,7 @@
-import {getLivePhoto} from './fetch.js';
+import {getData} from './fetch.js';
 import { showBigPicture } from './big-picture.js';
-import { showFilters } from './filter.js';
+import { showFilters, addFilterListener } from './filter.js';
+
 const thumbnailTemplate = document.querySelector('#picture').content.querySelector('.picture');
 const container = document.querySelector('.pictures');
 
@@ -18,7 +19,7 @@ const renderPictures = (pictures) => {
   pictures.forEach((picture) => container.append(createThumbnail(picture)));
 };
 const renderThumbnails = () => {
-  getLivePhoto()
+  getData()
     .then((res) => res.json())
     .then((content) => {
       renderPictures(content);
@@ -32,6 +33,7 @@ const renderThumbnails = () => {
         showBigPicture(dataId);
       });
       showFilters();
+      addFilterListener(content);
     });
 };
 export {renderThumbnails, renderPictures};
