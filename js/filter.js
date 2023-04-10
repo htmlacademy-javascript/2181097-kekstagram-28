@@ -47,10 +47,6 @@ discussedFilter.addEventListener('click', () => {
     });
 });
 
-
-
-let currentFilter = Filter.DEFAULT;
-let pictures = [];
 const sortRandomly = () => Math.random() - 0.5;
 const sortByComments = (pictureA, pictureB) =>
 pictureB.comments.length - pictureA.comments.length;
