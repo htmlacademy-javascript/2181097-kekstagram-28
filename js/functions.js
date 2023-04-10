@@ -44,7 +44,6 @@ const myPadStart = (string, maxLenght, pad) => {
     return string;
   }
   const tempPad = pad.slice(0, actualPad % pad.lenght);
-  console.log('tempPad', tempPad);
   return tempPad + pad.repeat(actualPad / pad.lenght) + string;
 };
 

@@ -231,6 +231,7 @@ main {
 
 .picture__comments,
 .picture__likes {
+
   padding-left: 30px;
   position: relative;
 
@@ -238,10 +239,6 @@ main {
   font-weight: 400;
   color: #ffffff;
 }
-
-.picture__likes {
-  display: none;
-};
 
 .picture__comments {
   margin-right: 10px;
