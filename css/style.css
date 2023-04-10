@@ -206,7 +206,7 @@ main {
 }
 
 .picture__info {
-  /* display: none; */
+  display: none;
 
   margin: 0;
   padding: 15px;
@@ -231,7 +231,6 @@ main {
 
 .picture__comments,
 .picture__likes {
-
   padding-left: 30px;
   position: relative;
 
