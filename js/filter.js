@@ -2,7 +2,6 @@ import { getLivePhoto } from './fetch.js';
 import { renderPictures } from './thumbnails.js';
 
 const filterElement = document.querySelector('.img-filters');
-const photoes = document.querySelectorAll('.picture');
 const Filter = {
   DEFAULT: 'filter-default',
   RANDOM: 'filter-random',
@@ -26,6 +25,7 @@ defaultFilter.addEventListener('click', () => {
       renderPictures(content);
     });
 });
+const sortRandomly = () => Math.random() - 0.5;
 const randomFilter = document.getElementById(Filter.RANDOM);
 randomFilter.addEventListener('click', () => {
   getLivePhoto()
@@ -46,10 +46,6 @@ discussedFilter.addEventListener('click', () => {
       renderPictures(content);
     });
 });
-
-const sortRandomly = () => Math.random() - 0.5;
-const sortByComments = (pictureA, pictureB) =>
-pictureB.comments.length - pictureA.comments.length;
 
 export {showFilters};
 // После завершения загрузки изображений с сервера покажите блок .img-filters, убрав у него скрывающий класс.
