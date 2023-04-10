@@ -50,5 +50,3 @@ const myPadStart = (string, maxLenght, pad) => {
 
 myPadStart();
 
-
-//  photoPreview.src = pictureLoader.value;

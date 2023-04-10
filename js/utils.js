@@ -7,10 +7,11 @@ const getRandomInteger = (a, b) => {
 const getRandomArrayElement = (elements) =>
   elements[getRandomInteger(0, elements.length - 1)];
 
-export {getRandomInteger,getRandomArrayElement};
+const isEscapeKey = (evt) => evt.key === 'Escape';
+export {getRandomInteger,getRandomArrayElement, isEscapeKey};
 
 // удалить функции для отрисовки моков
-// const ALERT_SHOW_TIME = 5000;
+// const ALERT_SHOW_TIME = 500;
 
 // const showAllert = (message) => {
 //   const alert = document.createElement('div');
