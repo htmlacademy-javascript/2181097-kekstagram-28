@@ -1,5 +1,5 @@
-import { getLivePhoto } from './fetch.js';
 import { renderPictures } from './thumbnails.js';
+import { debounce } from './utils.js';
 
 const filterElement = document.querySelector('.img-filters');
 const Filter = {
@@ -16,38 +16,28 @@ const removePhotoes = () => {
     photo.remove();
   });
 };
-const defaultFilter = document.getElementById(Filter.DEFAULT);
-defaultFilter.addEventListener('click', () => {
-  getLivePhoto()
-    .then((res) => res.json())
-    .then((content) => {
-      removePhotoes();
-      renderPictures(content);
-    });
-});
-const sortRandomly = () => Math.random() - 0.5;
-const randomFilter = document.getElementById(Filter.RANDOM);
-randomFilter.addEventListener('click', () => {
-  getLivePhoto()
-    .then((res) => res.json())
-    .then((content) => {
-      const sortedRandom = content.sort(sortRandomly).slice(0, 10);
-      removePhotoes();
-      renderPictures(sortedRandom);
-    });
-});
 const discussedFilter = document.getElementById(Filter.DISCUSSED);
-discussedFilter.addEventListener('click', () => {
-  getLivePhoto()
-    .then((res) => res.json())
-    .then((content) => {
-      removePhotoes();
-      content.sort((a, b) => b.comments.length - a.comments.length);
-      renderPictures(content);
-    });
-});
+const randomFilter = document.getElementById(Filter.RANDOM);
+const defaultFilter = document.getElementById(Filter.DEFAULT);
+const addFilterListener = (data) => {
+  defaultFilter.addEventListener('click', debounce(() => {
+    removePhotoes();
+    renderPictures(data);
+  }));
+  const sortRandomly = () => Math.random() - 0.5;
+  randomFilter.addEventListener('click', debounce(() => {
+    const sortedRandom = data.slice().sort(sortRandomly).slice(0, 10);
+    removePhotoes();
+    renderPictures(sortedRandom);
+  }));
+  discussedFilter.addEventListener('click', debounce(() => {
+    removePhotoes();
+    const sortedData = data.slice().sort((a, b) => b.comments.length - a.comments.length);
+    renderPictures(sortedData);
+  }));
+};
 
-export {showFilters};
+export {showFilters, addFilterListener};
 // После завершения загрузки изображений с сервера покажите блок .img-filters, убрав у него скрывающий класс.
 
 // Добавьте обработчики изменения фильтров, которые будут управлять порядком отрисовки элементов на странице:

@@ -1,5 +1,6 @@
 import { isEscapeKey } from './utils.js';
 import { sendData } from './fetch.js';
+
 const pictureLoader = document.querySelector('#upload-file');
 const closeLoader = document.querySelector('#upload-cancel');
 const showLoader = document.querySelector('.img-upload__overlay');
@@ -295,10 +296,19 @@ const onDocumentKeydown = (evt) => {
     closeImgEditForm();
   }
 };
+
+const FILE_TYPES = ['jpg', 'jpeg', 'png'];
+
 function openImgEditForm () {
   showLoader.classList.remove('hidden');
   document.body.classList.add('modal-open');
   document.addEventListener('keydown', onDocumentKeydown);
+  const file = pictureLoader.files[0];
+  const fileName = file.name.toLowerCase();
+  const matches = FILE_TYPES.some((it) => fileName.endsWith(it));
+  if (matches) {
+    photoPreview.src = URL.createObjectURL(file);
+  }
 }
 function closeImgEditForm () {
   showLoader.classList.add('hidden');
@@ -383,105 +393,3 @@ const onSubmitForm = (evt) => {
     });
 };
 uploadForm.addEventListener('submit', onSubmitForm);
-
-// const uploadForm = document.querySelector('.img-upload__form');
-// const successMessage = document.querySelector('#success');
-// const failureMessage = document.querySelector('#error');
-// const loadingMessage = document.querySelector('#messages');
-// // проверяет хэштэги на уникальность
-// const uniqueTags = (tags) => {
-//   const lowerCaseTags = tags.map((tag) => tag.toLowerCase());
-//   return lowerCaseTags.length === new Set(lowerCaseTags).size;
-// };
-// const isValidTag = (tag) => VALID_SYMBOLS.test(tag);
-// const validateTags = (value) => {
-//   const tags = value
-//     .trin()
-//     .split(' ')
-//     .filter((tag) => tag.trin().length);
-//   return validateTags && uniqueTags && tags.every(isValidTag);
-// };
-
-// pristine.addValidator(
-//   hashtagField,
-//   validateTags,
-//   TAG_ERROR_TEXT
-// );
-
-// const blockSubmitButton = () => {
-//   document.getElementById('#upload-submit').disabled = true;
-// };
-// const unblockSubmitButton = () => {
-//   document.getElementById('#upload-submit').disabled = false;
-// };
-// // дописать функции в проверку
-// const setOnFormSubmit = (cb) => {
-//   form.addEventListener('submit', async (evt) => {
-//     evt.preventDefault();
-//     const isValid = pristine.validate();
-
-//     if (isValid) {
-//       blockSubmitButton();
-//       await cb(new FormData(form));
-//       unblockSubmitButton();
-//     }
-//   });
-// };
-
-// const escapeCancel = ('keydown', (evt) => {
-//   if (evt.key === 'Escape') {
-//     evt.stopPropagation();
-//   }
-// });
-// commentField.addEventListener('keydown', () => {
-//   escapeCancel();
-// });
-// hashtagField.addEventListener('keydown', () => {
-//   escapeCancel();
-// });
-
-// 2.3. Хэш-теги:
-
-// хэш-тег начинается с символа # (решётка);
-// строка после решётки должна состоять из букв и чисел и не может содержать пробелы, спецсимволы (#, @, $ и т. п.), символы пунктуации (тире, дефис, запятая и т. п.), эмодзи и т. д.;
-// хеш-тег не может состоять только из одной решётки;
-// максимальная длина одного хэш-тега 20 символов, включая решётку;
-// хэш-теги нечувствительны к регистру: #ХэшТег и #хэштег считаются одним и тем же тегом;
-// хэш-теги разделяются пробелами;
-// один и тот же хэш-тег не может быть использован дважды;
-// нельзя указать больше пяти хэш-тегов;
-// хэш-теги необязательны;
-// если фокус находится в поле ввода хэш-тега, нажатие на Esc не должно приводить к закрытию формы редактирования изображения.
-// 2.4. Комментарий:
-
-// комментарий не обязателен;
-// длина комментария не может составлять больше 140 символов;
-// если фокус находится в поле ввода комментария, нажатие на Esc не должно приводить к закрытию формы редактирования изображения.
-// 3. Отправка данных на сервер
-// 3.1. После заполнения всех данных, при нажатии на кнопку «Отправить», все данные из формы, включая изображения,
-//  с помощью AJAX-запроса отправляются на сервер https://28.javascript.pages.academy/kekstagram методом POST с типом multipart/form-data.
-//  На время выполнения запроса к серверу кнопка «Отправить» блокируется.
-
-// 3.2. Страница реагирует на неправильно введённые значения в форму. Если данные, введённые в форму,
-// не соответствуют ограничениям, указанным в пунктах 2.3 и 2.4, форму невозможно отправить на сервер.
-// При попытке отправить форму с неправильными данными, отправки не происходит, а пользователю показываются ошибки для неверно заполненных
-// полей (для проверки данных используется сторонняя библиотека Pristine).
-
-// 3.3. При успешной отправке формы форма редактирования изображения закрывается, все данные, введённые в форму, и контрол фильтра приходят в исходное состояние:
-
-// масштаб возвращается к 100%;
-// эффект сбрасывается на «Оригинал»;
-// поля для ввода хэш-тегов и комментария очищаются;
-// поле загрузки фотографии, стилизованное под букву «О» в логотипе, очищается.
-// 3.4. Если отправка данных прошла успешно, показывается соответствующее сообщение. Разметку сообщения, которая находится в блоке
-// #success внутри шаблона template, нужно разместить перед закрывающим тегом </body>. Сообщение должно исчезать после нажатия на кнопку
-// .success__button, по нажатию на клавишу Esc и по клику на произвольную область экрана за пределами блока с сообщением.
-
-// 3.5. Если при отправке данных произошла ошибка запроса, нужно показать соответствующее сообщение.
-//  Разметку сообщения, которая находится в блоке #error внутри шаблона template, нужно разместить перед закрывающим тегом </body>.
-//  Сообщение должно исчезать после нажатия на кнопку .error__button,
-//  по нажатию на клавишу Esc и по клику на произвольную область экрана за пределами блока с сообщением.
-//   В таком случае вся введённая пользователем информация сохраняется, чтобы у него была возможность отправить форму повторно.
-
-// 3.6. Нажатие на кнопку #upload-cancel приводит к закрытию формы и возвращению всех данных и контрола фильтра к исходному состоянию (описано в пункте 3.3).
-// Поле загрузки фотографии, стилизованное под букву «О» в логотипе, очищается.
