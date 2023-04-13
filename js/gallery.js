@@ -1,11 +1,12 @@
-const bigPictureCommentsList = document.querySelector('.social__comments');
 const COMMENTS_PORTION = 5;
-let commentsLength = 0;
+const bigPictureCommentsList = document.querySelector('.social__comments');
 const commentsCount = document.querySelector('.comments-count');
 const commentsVisible = document.querySelector('.comments-shown');
 const commentLoader = document.querySelector('.comments-loader');
-let commentsShown = 0;
 const commentTemplate = document.querySelector('#comment').content.querySelector('.social__comment');
+let commentsShown = 0;
+let commentsLength = 0;
+
 const createComment = ({avatar, message, name}, visible) => {
   const comment = commentTemplate.cloneNode(true);
   const picture = comment.querySelector('.social__picture');
@@ -26,7 +27,7 @@ const showExtraComment = () => {
     commentLoader.classList.add('hidden');
   }
   commentsShown += COMMENTS_PORTION;
-  commentsVisible.innerHTML = commentsShown < commentsLength ? commentsShown : commentsLength;
+  commentsVisible.textContent = commentsShown < commentsLength ? commentsShown : commentsLength;
 };
 const renderComments = (comments) => {
   commentsShown += COMMENTS_PORTION;
@@ -38,8 +39,8 @@ const renderComments = (comments) => {
   }
   bigPictureCommentsList.innerHTML = '';
   comments.forEach((comment, index) => bigPictureCommentsList.append(createComment(comment, index < commentsShown)));
-  commentsVisible.innerHTML = commentsShown < commentsLength ? commentsShown : commentsLength;
-  commentsCount.innerHTML = comments.length;
+  commentsVisible.textContent = commentsShown < commentsLength ? commentsShown : commentsLength;
+  commentsCount.textContent = comments.length;
 };
 
 commentLoader.addEventListener('click', showExtraComment);
