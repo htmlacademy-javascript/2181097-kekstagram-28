@@ -1,31 +1,6 @@
 import { isEscapeKey } from './utils.js';
 import { sendData } from './fetch.js';
 
-const pictureLoader = document.querySelector('#upload-file');
-const closeLoader = document.querySelector('#upload-cancel');
-const showLoader = document.querySelector('.img-upload__overlay');
-const scaleSmaller = document.querySelector('.scale__control--smaller');
-const scaleBigger = document.querySelector('.scale__control--bigger');
-const scaleDefinition = document.querySelector('.scale__control--value');
-const uploadForm = document.querySelector('.img-upload__form');
-const successMessage = document.querySelector('#success');
-const failureMessage = document.querySelector('#error');
-const loadingMessage = document.querySelector('#messages');
-const scaleStep = 25;
-const minScale = 25;
-const maxScale = 100;
-const scaleDefault = 100;
-const photoPreview = document.querySelector('.img-upload__preview img');
-const form = document.querySelector('.img-upload__form');
-const hashtagField = document.querySelector('.text__hashtags');
-const commentField = document.querySelector('.text__description');
-const sliderDefaultValue = 100;
-const sliderContainer = document.querySelector('.effect-level');
-const slider = document.querySelector('.effect-level__slider');
-const sliderValue = document.querySelector('.effect-level__value');
-const effectsList = document.querySelector('.effects__list');
-const imgUploadSubmit = document.querySelector('.img-upload__submit');
-
 const EFFECTS = [
   {
     name: 'none',
@@ -78,36 +53,60 @@ const EFFECTS = [
   },
 ];
 
+const SLIDER_DEFAULT_VALUE = 100;
+const SCALE_STEP = 25;
+const MIN_SCALE = 25;
+const MAX_SCALE = 100;
+const SCALE_DEFAULT = 100;
 const DEFAULT_EFFECT = EFFECTS[0];
+const FILE_TYPES = ['jpg', 'jpeg', 'png'];
+const pictureLoader = document.querySelector('#upload-file');
+const closeLoader = document.querySelector('#upload-cancel');
+const showLoader = document.querySelector('.img-upload__overlay');
+const scaleSmaller = document.querySelector('.scale__control--smaller');
+const scaleBigger = document.querySelector('.scale__control--bigger');
+const scaleDefinition = document.querySelector('.scale__control--value');
+const uploadForm = document.querySelector('.img-upload__form');
+const successMessage = document.querySelector('#success');
+const failureMessage = document.querySelector('#error');
+const loadingMessage = document.querySelector('#messages');
+const photoPreview = document.querySelector('.img-upload__preview img');
+const form = document.querySelector('.img-upload__form');
+const hashtagField = document.querySelector('.text__hashtags');
+const commentField = document.querySelector('.text__description');
+const sliderContainer = document.querySelector('.effect-level');
+const slider = document.querySelector('.effect-level__slider');
+const sliderValue = document.querySelector('.effect-level__value');
+const effectsList = document.querySelector('.effects__list');
+const imgUploadSubmit = document.querySelector('.img-upload__submit');
 let chosenEffect = DEFAULT_EFFECT;
-
 
 const scaleIconChange = (value) => {
   photoPreview.style.transform = `scale(${value / 100})`;
   scaleDefinition.value = `${value}%`;
 };
 
-const loaderModal = () => {
+const onModalLoad = () => {
   showLoader.classList.remove('hidden');
   document.body.classList.add('modal-open');
-  scaleIconChange(scaleDefault);
+  scaleIconChange(SCALE_DEFAULT);
 };
 
-pictureLoader.addEventListener('change', loaderModal);
+pictureLoader.addEventListener('change', onModalLoad);
 const onSmallerClick = () => {
   const currentValue = parseInt(scaleDefinition.value, 10);
-  let newValue = currentValue - scaleStep;
-  if (newValue < minScale) {
-    newValue = minScale;
+  let newValue = currentValue - SCALE_STEP;
+  if (newValue < MIN_SCALE) {
+    newValue = MIN_SCALE;
   }
   scaleIconChange(newValue);
 };
 
 const onBiggerClick = () => {
   const currentValue = parseInt(scaleDefinition.value, 10);
-  let newValue = currentValue + scaleStep;
-  if (newValue > maxScale) {
-    newValue = maxScale;
+  let newValue = currentValue + SCALE_STEP;
+  if (newValue > MAX_SCALE) {
+    newValue = MAX_SCALE;
   }
   scaleIconChange(newValue);
 };
@@ -115,18 +114,18 @@ const onBiggerClick = () => {
 scaleSmaller.addEventListener('click', onSmallerClick);
 scaleBigger.addEventListener('click', onBiggerClick);
 
-const closerModal = () => {
+const onModalClose = () => {
   showLoader.classList.add('hidden');
   document.body.classList.remove('modal-open');
   document.removeEventListener ('keydown', onDocumentKeyDown);
   function onDocumentKeyDown (evt) {
     if (evt.key === 'Escape') {
-      closerModal();
+      onModalClose();
     }
   }
 };
 
-closeLoader.addEventListener('click', closerModal);
+closeLoader.addEventListener('click', onModalClose);
 
 const isDefault = () => chosenEffect === DEFAULT_EFFECT;
 const hideSlider = () => {
@@ -155,7 +154,7 @@ const updateSlider = () => {
 };
 
 const resetScale = () => {
-  scaleIconChange(scaleDefault);
+  scaleIconChange(SCALE_DEFAULT);
 };
 
 const changeEffect = (evt) => {
@@ -165,11 +164,11 @@ const changeEffect = (evt) => {
   const currentEffect = evt.target.value;
   chosenEffect = EFFECTS.find((effect) => effect.name === currentEffect);
   photoPreview.className = `effects__preview--${chosenEffect.name}`;
-  sliderValue.value = sliderDefaultValue;
+  sliderValue.value = SLIDER_DEFAULT_VALUE;
   updateSlider();
   if (currentEffect === 'marvin') {
     photoPreview.style.filter = 'invert(100%)';
-    sliderValue.value = sliderDefaultValue;
+    sliderValue.value = SLIDER_DEFAULT_VALUE;
     slider.noUiSlider.on('update', () => {
       sliderValue.value = slider.noUiSlider.get();
       photoPreview.style.filter = `invert(${sliderValue.value}%)`;
@@ -178,7 +177,7 @@ const changeEffect = (evt) => {
 
   if (currentEffect === 'chrome') {
     photoPreview.style.filter = 'grayscale(1)';
-    sliderValue.value = sliderDefaultValue;
+    sliderValue.value = SLIDER_DEFAULT_VALUE;
     slider.noUiSlider.on('update', () => {
       sliderValue.value = slider.noUiSlider.get();
       photoPreview.style.filter = `grayscale(${sliderValue.value})`;
@@ -187,7 +186,7 @@ const changeEffect = (evt) => {
 
   if (currentEffect === 'sepia') {
     photoPreview.style.filter = 'sepia(1)';
-    sliderValue.value = sliderDefaultValue;
+    sliderValue.value = SLIDER_DEFAULT_VALUE;
     slider.noUiSlider.on('update', () => {
       sliderValue.value = slider.noUiSlider.get();
       photoPreview.style.filter = `sepia(${sliderValue.value})`;
@@ -196,7 +195,7 @@ const changeEffect = (evt) => {
 
   if (currentEffect === 'phobos') {
     photoPreview.style.filter = 'blur(3px)';
-    sliderValue.value = sliderDefaultValue;
+    sliderValue.value = SLIDER_DEFAULT_VALUE;
     slider.noUiSlider.on('update', () => {
       sliderValue.value = slider.noUiSlider.get();
       photoPreview.style.filter = `blur(${sliderValue.value}px)`;
@@ -205,7 +204,7 @@ const changeEffect = (evt) => {
 
   if (currentEffect === 'heat') {
     photoPreview.style.filter = 'brightness(3)';
-    sliderValue.value = sliderDefaultValue;
+    sliderValue.value = SLIDER_DEFAULT_VALUE;
     slider.noUiSlider.on('update', () => {
       sliderValue.value = slider.noUiSlider.get();
       photoPreview.style.filter = `brightness(${sliderValue.value})`;
@@ -269,12 +268,7 @@ const validateHashtag = (value) => {
     function hasDuplicates() {
       return new Set(arrHashtags).size !== arrHashtags.length;
     }
-
-    if (hasDuplicates(arrHashtags)) {
-      return false;
-    }else {
-      return true;
-    }
+    return !hasDuplicates(arrHashtags);
   };
 
   if(validateHashtagLength(value) && validateHashtagExp(value) && validateHashtagDublicate(value)){
@@ -294,10 +288,17 @@ const onDocumentKeydown = (evt) => {
   if (isEscapeKey(evt)) {
     evt.preventDefault();
     closeImgEditForm();
+    document.removeEventListener('keydowm', onDocumentKeydown);
+  }
+};
+const onOverlayClick = (evt) => {
+  if (evt.target === evt.currentTarget) {
+    closeImgEditForm();
+    document.removeEventListener('keydowm', onDocumentKeydown);
   }
 };
 
-const FILE_TYPES = ['jpg', 'jpeg', 'png'];
+pictureLoader.addEventListener('click', onOverlayClick);
 
 function openImgEditForm () {
   showLoader.classList.remove('hidden');
@@ -356,11 +357,11 @@ const removeSuccessMessage = () => {
   success.remove();
 };
 const showSuccessMessage = () => {
-  const success = successMessage.content.cloneNode(true);
-  const closeSuccessButton = success.querySelector('.success__button');
-  closeSuccessButton.addEventListener('click', removeSuccessMessage);
+  const success = successMessage.content.querySelector('.success').cloneNode(true);
+  success.addEventListener('click', removeSuccessMessage);
   document.addEventListener('keydown', hideMessage);
   document.body.append(success);
+  closeImgEditForm();
 };
 
 const removeErrorMessage = () => {
@@ -368,14 +369,16 @@ const removeErrorMessage = () => {
   error.remove();
 };
 const showErrorMessage = () => {
-  const error = failureMessage.content.cloneNode(true);
-  const closeErrorButton = error.querySelector('.error__button');
-  closeErrorButton.addEventListener('click', removeErrorMessage);
+  const error = failureMessage.content.querySelector('.error').cloneNode(true);
+  error.addEventListener('click', removeErrorMessage);
   document.addEventListener('keydown', hideMessage);
   document.body.append(error);
 };
 const onSubmitForm = (evt) => {
   evt.preventDefault();
+  if (!pristine.validate()) {
+    return;
+  }
   showLoadingMessage();
   const body = new FormData(evt.target);
   sendData(body)
